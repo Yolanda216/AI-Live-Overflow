@@ -18,7 +18,11 @@ public class MainActivity extends Activity {
             );
             startActivity(intent);
         }
-        startService(new Intent(this, OverlayService.class));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, OverlayService.class));
+        } else {
+            startService(new Intent(this, OverlayService.class));
+        }
         finish();
     }
 }
