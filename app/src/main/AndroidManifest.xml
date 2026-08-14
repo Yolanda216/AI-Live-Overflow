@@ -24,6 +24,6 @@
         <service
             android:name=".OverlayService"
             android:exported="false"
-            android:foregroundServiceType="specialUse" />
+            android:foregroundServiceType="dataSync" />
     </application>
 </manifest>
