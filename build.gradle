@@ -1,0 +1,10 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.5.0'
+    }
+}
+// allprojects 已移除，仓库在 settings.gradle 统一声明

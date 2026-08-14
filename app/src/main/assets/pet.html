@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
+  #pet { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  #face { transition: transform 0.2s; }
+  #bubble { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.92); border-radius: 12px; padding: 6px 10px; font-size: 13px; color: #333; display: none; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+</style>
+</head>
+<body>
+  <div id="bubble"></div>
+  <div id="pet">
+    <svg id="face" width="140" height="160" viewBox="0 0 140 160">
+      <ellipse cx="70" cy="90" rx="58" ry="52" fill="#2b3a55"/>
+      <ellipse cx="70" cy="52" rx="44" ry="40" fill="#2b3a55"/>
+      <ellipse cx="52" cy="54" rx="7" ry="9" fill="#1c2740"/>
+      <ellipse cx="88" cy="54" rx="7" ry="9" fill="#1c2740"/>
+      <circle cx="55" cy="52" r="3" fill="#8fb7ff"/>
+      <circle cx="91" cy="52" r="3" fill="#8fb7ff"/>
+      <path d="M58 78 Q70 88 82 78" stroke="#1c2740" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+<script>
+  window.petEngine = {
+    say: function(text) {
+      var b = document.getElementById('bubble');
+      b.textContent = text;
+      b.style.display = 'block';
+      setTimeout(function(){ b.style.display = 'none'; }, 2000);
+    },
+    bounce: function() {
+      var f = document.getElementById('face');
+      f.style.transform = 'scale(1.12)';
+      setTimeout(function(){ f.style.transform = 'scale(1)'; }, 180);
+    },
+    onTap: function() {
+      this.bounce();
+      this.say('我在呢');
+    },
+    onDoubleTap: function() {
+      this.bounce();
+      this.say('摸摸头');
+    },
+    onLongPress: function() {
+      this.bounce();
+      this.say('一直陪你');
+    }
+  };
+</script>
+</body>
+</html>
