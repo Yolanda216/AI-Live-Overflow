@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +19,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.core.app.NotificationCompat;
+
+import java.io.File;
+import java.io.FileWriter;
 
 public class OverlayService extends Service {
 
@@ -38,6 +42,16 @@ public class OverlayService extends Service {
     private long touchStartTime = 0L;
     private boolean hasMoved = false;
 
+    private void log(String s) {
+        try {
+            File f = new File("/sdcard/Download/pet_error.txt");
+            FileWriter fw = new FileWriter(f, true);
+            fw.append("[SVC] ").append(s).append("\n");
+            fw.close();
+        } catch (Throwable t) {}
+        Log.d("PetDebug", s);
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -46,9 +60,25 @@ public class OverlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannel();
-        startForeground(NOTIFICATION_ID, buildNotification("澈在屏幕上啦"));
-        setupOverlay();
+        log("=== OverlayService onCreate ===");
+        try {
+            createNotificationChannel();
+            log("channel created");
+        } catch (Throwable t) {
+            log("createNotificationChannel FAILED: " + t);
+        }
+        try {
+            startForeground(NOTIFICATION_ID, buildNotification("澈在屏幕上啦"));
+            log("startForeground ok");
+        } catch (Throwable t) {
+            log("startForeground FAILED: " + t);
+        }
+        try {
+            setupOverlay();
+            log("setupOverlay ok");
+        } catch (Throwable t) {
+            log("setupOverlay FAILED: " + t);
+        }
     }
 
     private void setupOverlay() {
@@ -64,6 +94,7 @@ public class OverlayService extends Service {
         params.gravity = Gravity.TOP | Gravity.START;
         params.x = 50;
         params.y = 300;
+        log("params built, type=APPLICATION_OVERLAY");
 
         overlayView = new WebView(this);
         overlayView.setBackgroundColor(0x00000000);
@@ -74,9 +105,11 @@ public class OverlayService extends Service {
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         overlayView.setWebViewClient(new WebViewClient());
         overlayView.loadUrl("file:///android_asset/pet.html");
+        log("webview loaded pet.html");
         overlayView.setOnTouchListener(createTouchListener());
 
         windowManager.addView(overlayView, params);
+        log("addView ok");
     }
 
     private View.OnTouchListener createTouchListener() {
@@ -92,7 +125,6 @@ public class OverlayService extends Service {
                         touchStartTime = System.currentTimeMillis();
                         hasMoved = false;
                         return true;
-
                     case MotionEvent.ACTION_MOVE:
                         int dx = (int) (event.getRawX() - initialTouchX);
                         int dy = (int) (event.getRawY() - initialTouchY);
@@ -103,7 +135,6 @@ public class OverlayService extends Service {
                         params.y = initialY + dy;
                         windowManager.updateViewLayout(overlayView, params);
                         return true;
-
                     case MotionEvent.ACTION_UP:
                         long elapsed = System.currentTimeMillis() - touchStartTime;
                         if (!hasMoved) {
@@ -168,10 +199,12 @@ public class OverlayService extends Service {
 
     @Override
     public void onDestroy() {
-        if (overlayView != null) {
-            windowManager.removeView(overlayView);
-            overlayView.destroy();
-        }
+        try {
+            if (overlayView != null) {
+                windowManager.removeView(overlayView);
+                overlayView.destroy();
+            }
+        } catch (Throwable t) {}
         overlayView = null;
         super.onDestroy();
     }
