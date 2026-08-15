@@ -70,6 +70,8 @@ public class OverlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+createNotificationChannel();
+startForeground(NOTIFICATION_ID, buildNotification());
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_HIDE.equals(action)) {
@@ -84,6 +86,8 @@ public class OverlayService extends Service {
         }
         // 默认（点图标启动）
         log("onStartCommand: default show");
+createNotificationChannel();
+startForeground(NOTIFICATION_ID, buildNotification());
         showOverlay();
         return START_STICKY;
     }
@@ -94,6 +98,7 @@ public class OverlayService extends Service {
         log("=== OverlayService onCreate ===");
         try {
             createNotificationChannel();
+startForeground(NOTIFICATION_ID, buildNotification());
             log("channel created");
         } catch (Throwable t) {
             log("createNotificationChannel FAILED: " + t);
