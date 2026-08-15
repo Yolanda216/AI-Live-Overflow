@@ -231,12 +231,13 @@ public class OverlayService extends Service {
         PendingIntent hideIntent = buildActionPendingIntent(ACTION_HIDE);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("\uD83D\uDC3E")
-                .setContentText("澈在屏幕上啦")
+                .setContentTitle("澈在屏幕上啦")
+                .setContentText("点显示 / 隐藏 控制我")
                 .setSmallIcon(android.R.drawable.ic_menu_compass)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
-                .setSilent(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .addAction(0, "显示", showIntent)
                 .addAction(0, "隐藏", hideIntent)
                 .build();
@@ -245,9 +246,10 @@ public class OverlayService extends Service {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID, "Pet", NotificationManager.IMPORTANCE_LOW
+                    CHANNEL_ID, "Pet", NotificationManager.IMPORTANCE_DEFAULT
             );
             channel.setShowBadge(false);
+            channel.setSound(null, null);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
