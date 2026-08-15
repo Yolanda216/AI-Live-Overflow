@@ -30,9 +30,13 @@ public class OverlayService extends Service {
     private static final int PET_SIZE_DP = 180;
     private static final int PET_HEIGHT_DP = 240;
 
+    public static final String ACTION_SHOW = "com.example.deskpet.ACTION_SHOW";
+    public static final String ACTION_HIDE = "com.example.deskpet.ACTION_HIDE";
+
     private WindowManager windowManager;
     private WebView overlayView;
     private WindowManager.LayoutParams params;
+    private boolean overlayVisible = false;
 
     private int initialX = 0;
     private int initialY = 0;
@@ -44,7 +48,8 @@ public class OverlayService extends Service {
 
     private void log(String s) {
         try {
-            File f = new File("/sdcard/Download/pet_error.txt");
+            File dir = getFilesDir();
+            File f = new File(dir, "pet_error.txt");
             FileWriter fw = new FileWriter(f, true);
             fw.append("[SVC] ").append(s).append("\n");
             fw.close();
@@ -58,6 +63,26 @@ public class OverlayService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null) {
+            String action = intent.getAction();
+            if (ACTION_HIDE.equals(action)) {
+                log("action: HIDE");
+                hideOverlay();
+                return START_STICKY;
+            } else if (ACTION_SHOW.equals(action)) {
+                log("action: SHOW");
+                showOverlay();
+                return START_STICKY;
+            }
+        }
+        // 默认（点图标启动）
+        log("onStartCommand: default show");
+        showOverlay();
+        return START_STICKY;
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         log("=== OverlayService onCreate ===");
@@ -68,17 +93,39 @@ public class OverlayService extends Service {
             log("createNotificationChannel FAILED: " + t);
         }
         try {
-            startForeground(NOTIFICATION_ID, buildNotification("澈在屏幕上啦"));
+            startForeground(NOTIFICATION_ID, buildNotification());
             log("startForeground ok");
         } catch (Throwable t) {
             log("startForeground FAILED: " + t);
         }
+    }
+
+    private void showOverlay() {
+        if (overlayVisible) {
+            log("showOverlay: already visible, skip");
+            return;
+        }
         try {
             setupOverlay();
-            log("setupOverlay ok");
+            overlayVisible = true;
+            log("showOverlay ok");
         } catch (Throwable t) {
-            log("setupOverlay FAILED: " + t);
+            log("showOverlay FAILED: " + t);
         }
+    }
+
+    private void hideOverlay() {
+        try {
+            if (overlayView != null && windowManager != null) {
+                windowManager.removeView(overlayView);
+                overlayView.destroy();
+                overlayView = null;
+            }
+        } catch (Throwable t) {
+            log("hideOverlay error: " + t);
+        }
+        overlayVisible = false;
+        log("hideOverlay ok");
     }
 
     private void setupOverlay() {
@@ -166,19 +213,32 @@ public class OverlayService extends Service {
         overlayView.evaluateJavascript("window.petEngine && window.petEngine.onLongPress()", null);
     }
 
-    private Notification buildNotification(String text) {
+    private PendingIntent buildActionPendingIntent(String action) {
+        Intent i = new Intent(this, OverlayService.class);
+        i.setAction(action);
+        return PendingIntent.getService(
+                this, action.hashCode(), i, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+        );
+    }
+
+    private Notification buildNotification() {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 this, 0,
                 getPackageManager().getLaunchIntentForPackage(getPackageName()),
                 PendingIntent.FLAG_IMMUTABLE
         );
+        PendingIntent showIntent = buildActionPendingIntent(ACTION_SHOW);
+        PendingIntent hideIntent = buildActionPendingIntent(ACTION_HIDE);
+
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("\uD83D\uDC3E")
-                .setContentText(text)
+                .setContentText("澈在屏幕上啦")
                 .setSmallIcon(android.R.drawable.ic_menu_compass)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .setSilent(true)
+                .addAction(0, "显示", showIntent)
+                .addAction(0, "隐藏", hideIntent)
                 .build();
     }
 
@@ -206,6 +266,7 @@ public class OverlayService extends Service {
             }
         } catch (Throwable t) {}
         overlayView = null;
+        overlayVisible = false;
         super.onDestroy();
     }
 }

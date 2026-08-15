@@ -15,7 +15,8 @@ public class MainActivity extends Activity {
 
     private void log(String s) {
         try {
-            File f = new File("/sdcard/Download/pet_error.txt");
+            File dir = getFilesDir();
+            File f = new File(dir, "pet_error.txt");
             FileWriter fw = new FileWriter(f, true);
             fw.append(s).append("\n");
             fw.close();
