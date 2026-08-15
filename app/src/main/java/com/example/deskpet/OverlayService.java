@@ -238,11 +238,11 @@ public class OverlayService extends Service {
         return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("澈在屏幕上啦")
                 .setContentText("点显示 / 隐藏 控制我")
-                .setSmallIcon(android.R.drawable.ic_menu_compass)
+                .setSmallIcon(android.R.drawable.stat_notify_more)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setCategory(NotificationCompat.CATEGORY_SYSTEM)
                 .addAction(0, "显示", showIntent)
                 .addAction(0, "隐藏", hideIntent)
                 .build();
