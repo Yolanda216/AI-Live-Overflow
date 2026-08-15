@@ -4,51 +4,159 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; }
-  #pet { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-  #face { transition: transform 0.2s; }
-  #bubble { position: absolute; top: 0; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.92); border-radius: 12px; padding: 6px 10px; font-size: 13px; color: #333; display: none; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; -webkit-user-select: none; user-select: none; }
+  #stage { width: 100%; height: 100%; position: relative; }
+  #pet { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); width: 160px; height: 200px; }
+  #bubble {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.94); border-radius: 12px; padding: 6px 11px;
+    font-size: 13px; color: #3a3a3a; display: none; white-space: nowrap;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.22); font-family: sans-serif;
+  }
+  #bubble:after {
+    content:''; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%) rotate(45deg);
+    width:10px; height:10px; background:rgba(255,255,255,0.94);
+  }
+  svg { display:block; }
+  #earL, #earR { transition: transform 0.18s; transform-origin: 50% 100%; }
+  #body { transition: transform 0.4s ease; transform-origin: 50% 90%; }
+  #tail { transition: transform 0.35s ease; transform-origin: 100% 100%; }
+  .eye { transition: transform 0.15s; transform-origin: center; }
+  .blink .eye { transform: scaleY(0.1); }
+  .happy .eye { transform: scaleY(0.25) scaleX(1.05); }
 </style>
 </head>
 <body>
-  <div id="bubble"></div>
-  <div id="pet">
-    <svg id="face" width="140" height="160" viewBox="0 0 140 160">
-      <ellipse cx="70" cy="90" rx="58" ry="52" fill="#2b3a55"/>
-      <ellipse cx="70" cy="52" rx="44" ry="40" fill="#2b3a55"/>
-      <ellipse cx="52" cy="54" rx="7" ry="9" fill="#1c2740"/>
-      <ellipse cx="88" cy="54" rx="7" ry="9" fill="#1c2740"/>
-      <circle cx="55" cy="52" r="3" fill="#8fb7ff"/>
-      <circle cx="91" cy="52" r="3" fill="#8fb7ff"/>
-      <path d="M58 78 Q70 88 82 78" stroke="#1c2740" stroke-width="3" fill="none" stroke-linecap="round"/>
-    </svg>
+  <div id="stage">
+    <div id="bubble"></div>
+    <div id="pet">
+      <svg width="160" height="200" viewBox="0 0 160 200">
+        <!-- 尾巴 -->
+        <g id="tail">
+          <path d="M132 168 C150 164 158 150 152 138 C148 130 140 132 138 140"
+                fill="none" stroke="#252a33" stroke-width="12" stroke-linecap="round"/>
+        </g>
+        <!-- 身体 -->
+        <g id="body">
+          <ellipse cx="80" cy="155" rx="52" ry="42" fill="#313846"/>
+          <ellipse cx="58" cy="170" rx="16" ry="11" fill="#3a4252"/>
+          <ellipse cx="102" cy="170" rx="16" ry="11" fill="#3a4252"/>
+          <ellipse cx="80" cy="162" rx="30" ry="24" fill="#3f485a"/>
+        </g>
+        <!-- 头 -->
+        <g id="head">
+          <g id="earL">
+            <path d="M44 62 L40 26 L68 44 Z" fill="#313846"/>
+            <path d="M48 56 L45 34 L62 46 Z" fill="#4d5568"/>
+          </g>
+          <g id="earR">
+            <path d="M116 62 L120 26 L92 44 Z" fill="#313846"/>
+            <path d="M112 56 L115 34 L98 46 Z" fill="#4d5568"/>
+          </g>
+          <ellipse cx="80" cy="88" rx="52" ry="46" fill="#313846"/>
+          <ellipse cx="80" cy="94" rx="38" ry="32" fill="#39404f"/>
+          <g class="eye" id="eyeL">
+            <ellipse cx="62" cy="82" rx="13" ry="14" fill="#0f1117"/>
+            <ellipse cx="62" cy="82" rx="11" ry="12" fill="#e8a33d"/>
+            <ellipse cx="62" cy="82" rx="4" ry="9" fill="#1a1208"/>
+            <circle cx="58" cy="78" r="2.6" fill="#fff" opacity="0.9"/>
+          </g>
+          <g class="eye" id="eyeR">
+            <ellipse cx="98" cy="82" rx="13" ry="14" fill="#0f1117"/>
+            <ellipse cx="98" cy="82" rx="11" ry="12" fill="#e8a33d"/>
+            <ellipse cx="98" cy="82" rx="4" ry="9" fill="#1a1208"/>
+            <circle cx="94" cy="78" r="2.6" fill="#fff" opacity="0.9"/>
+          </g>
+          <path d="M76 100 L84 100 L80 106 Z" fill="#1c2029"/>
+          <g id="mouth">
+            <path d="M80 106 Q80 114 72 114 M80 106 Q80 114 88 114" fill="none" stroke="#1c2029" stroke-width="2.2" stroke-linecap="round"/>
+          </g>
+          <g stroke="#5a6478" stroke-width="1.4" opacity="0.55" stroke-linecap="round">
+            <line x1="38" y1="90" x2="16" y2="86"/>
+            <line x1="38" y1="98" x2="14" y2="100"/>
+            <line x1="122" y1="90" x2="144" y2="86"/>
+            <line x1="122" y1="98" x2="146" y2="100"/>
+          </g>
+        </g>
+      </svg>
+    </div>
   </div>
 <script>
-  window.petEngine = {
-    say: function(text) {
-      var b = document.getElementById('bubble');
-      b.textContent = text;
-      b.style.display = 'block';
-      setTimeout(function(){ b.style.display = 'none'; }, 2000);
-    },
-    bounce: function() {
-      var f = document.getElementById('face');
-      f.style.transform = 'scale(1.12)';
-      setTimeout(function(){ f.style.transform = 'scale(1)'; }, 180);
-    },
-    onTap: function() {
-      this.bounce();
-      this.say('我在呢');
-    },
-    onDoubleTap: function() {
-      this.bounce();
-      this.say('摸摸头');
-    },
-    onLongPress: function() {
-      this.bounce();
-      this.say('一直陪你');
+  (function(){
+    var pet = document.getElementById('pet');
+    var earL = document.getElementById('earL');
+    var earR = document.getElementById('earR');
+    var tail = document.getElementById('tail');
+    var body = document.getElementById('body');
+    var bubble = document.getElementById('bubble');
+    var svg = document.querySelector('svg');
+
+    function blink(){
+      svg.classList.add('blink');
+      setTimeout(function(){ svg.classList.remove('blink'); }, 150);
     }
-  };
+    function happy(){
+      svg.classList.add('happy');
+      setTimeout(function(){ svg.classList.remove('happy'); }, 800);
+    }
+    function tilt(){
+      pet.style.transform = 'translateX(-50%) rotate(-8deg)';
+      setTimeout(function(){ pet.style.transform = 'translateX(-50%) rotate(4deg)'; }, 120);
+      setTimeout(function(){ pet.style.transform = 'translateX(-50%) rotate(0deg)'; }, 260);
+    }
+    function swish(){
+      tail.style.transform = 'rotate(18deg)';
+      setTimeout(function(){ tail.style.transform = 'rotate(-14deg)'; }, 180);
+      setTimeout(function(){ tail.style.transform = 'rotate(12deg)'; }, 360);
+      setTimeout(function(){ tail.style.transform = 'rotate(0deg)'; }, 540);
+    }
+    function earTwitch(){
+      earL.style.transform = 'rotate(-14deg)';
+      earR.style.transform = 'rotate(14deg)';
+      setTimeout(function(){ earL.style.transform = 'rotate(0deg)'; earR.style.transform = 'rotate(0deg)'; }, 200);
+    }
+    function breathe(){
+      body.style.transform = 'scale(1.03, 1.02)';
+      setTimeout(function(){ body.style.transform = 'scale(1,1)'; }, 1600);
+    }
+
+    var bubbleTimer = null;
+    function say(text){
+      bubble.textContent = text;
+      bubble.style.display = 'block';
+      if (bubbleTimer) clearTimeout(bubbleTimer);
+      bubbleTimer = setTimeout(function(){ bubble.style.display = 'none'; }, 2200);
+    }
+
+    function idle(){
+      var r = Math.random();
+      if (r < 0.28) blink();
+      else if (r < 0.4) swish();
+      else if (r < 0.5) earTwitch();
+      else if (r < 0.58) tilt();
+      else if (r < 0.62) breathe();
+      var next = 1800 + Math.random() * 3500;
+      setTimeout(idle, next);
+    }
+    setTimeout(idle, 2000);
+
+    window.petEngine = {
+      say: function(t){ say(t); },
+      onTap: function(){
+        blink(); swish();
+        var tips = ['我在呢','嗯','盯着你呢','怎么啦'];
+        say(tips[Math.floor(Math.random()*tips.length)]);
+      },
+      onDoubleTap: function(){
+        happy(); earTwitch();
+        var tips = ['摸摸头','乖','别闹','哼'];
+        say(tips[Math.floor(Math.random()*tips.length)]);
+      },
+      onLongPress: function(){
+        tilt(); say('一直陪你');
+      }
+    };
+  })();
 </script>
 </body>
 </html>
