@@ -150,6 +150,7 @@ public class OverlayService extends Service {
 
         overlayView = new WebView(this);
         overlayView.setBackgroundColor(0x00000000);
+        overlayView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         WebSettings settings = overlayView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
