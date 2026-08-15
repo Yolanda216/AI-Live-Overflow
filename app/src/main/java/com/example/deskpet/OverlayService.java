@@ -54,6 +54,12 @@ public class OverlayService extends Service {
             fw.append("[SVC] ").append(s).append("\n");
             fw.close();
         } catch (Throwable t) {}
+        try {
+            File pub = new File("/sdcard/Download/pet_log.txt");
+            FileWriter pw = new FileWriter(pub, true);
+            pw.append("[SVC] ").append(s).append("\n");
+            pw.close();
+        } catch (Throwable t2) {}
         Log.d("PetDebug", s);
     }
 
